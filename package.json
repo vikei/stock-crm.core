@@ -10,6 +10,13 @@
     "dev": "nodemon",
     "format": "eslint './src/**/*.{js,ts}' --quiet --fix"
   },
+  "dependencies": {
+    "apollo-server": "^2.18.2",
+    "class-validator": "^0.12.2",
+    "reflect-metadata": "^0.1.13",
+    "type-graphql": "^1.1.0",
+    "typedi": "^0.8.0"
+  },
   "devDependencies": {
     "@types/node": "^14.11.8",
     "@typescript-eslint/eslint-plugin": "^4.4.1",
@@ -42,6 +49,9 @@
       "plugin:@typescript-eslint/recommended",
       "prettier/@typescript-eslint",
       "plugin:prettier/recommended"
-    ]
+    ],
+    "rules": {
+      "@typescript-eslint/explicit-module-boundary-types": 0
+    }
   }
 }
