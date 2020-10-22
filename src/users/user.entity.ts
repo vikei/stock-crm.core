@@ -1,7 +1,7 @@
 import {Field, ID, ObjectType} from "type-graphql";
 import {Column, Entity, PrimaryGeneratedColumn} from "typeorm/index";
 
-@ObjectType()
+@ObjectType("User")
 @Entity()
 export default class UserEntity {
   @Field(() => ID)

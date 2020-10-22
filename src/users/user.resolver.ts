@@ -11,13 +11,13 @@ export default class UserResolver {
   constructor(@InjectRepository(UserEntity) private userRepository: Repository<UserEntity>) {}
 
   @Mutation(() => UserEntity)
-  async register(@Arg("input") input: UserCredentials) {
+  async register(@Arg("input") input: UserCredentials): Promise<UserEntity> {
     const {id} = await this.userRepository.save(input);
-    return (await this.userRepository.findOne(id))!;
+    return (await this.userRepository.findOne(id)) as UserEntity;
   }
 
-  @Query(() => UserEntity, {nullable: true})
-  async login(@Arg("input") {email, password}: UserCredentials) {
+  @Mutation(() => UserEntity, {nullable: true})
+  async login(@Arg("input") {email, password}: UserCredentials): Promise<UserEntity | null> {
     const user = await this.userRepository.findOne({email});
 
     if (!user) {
@@ -29,5 +29,10 @@ export default class UserResolver {
     }
 
     return user;
+  }
+
+  @Query(() => UserEntity, {nullable: true})
+  async getUser(@Arg("id") id: string): Promise<UserEntity | null> {
+    return (await this.userRepository.findOne(id)) ?? null;
   }
 }
