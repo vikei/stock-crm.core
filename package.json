@@ -24,6 +24,7 @@
     "eslint": "^7.11.0",
     "eslint-config-prettier": "^6.12.0",
     "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-type-graphql": "^0.2.0",
     "nodemon": "^2.0.5",
     "prettier": "^2.1.2",
     "rimraf": "^3.0.2",
@@ -43,12 +44,16 @@
     ],
     "parserOptions": {
       "ecmaVersion": 2020,
-      "sourceType": "module"
+      "sourceType": "module",
+      "project": "./tsconfig.json"
     },
+    "plugins": ["type-graphql"],
     "extends": [
       "plugin:@typescript-eslint/recommended",
+      "plugin:@typescript-eslint/recommended-requiring-type-checking",
       "prettier/@typescript-eslint",
-      "plugin:prettier/recommended"
+      "plugin:prettier/recommended",
+      "plugin:type-graphql/recommended"
     ],
     "rules": {
       "@typescript-eslint/explicit-module-boundary-types": 0
