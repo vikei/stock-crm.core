@@ -4,16 +4,14 @@
     "module": "commonjs",
     "lib": ["es2018", "esnext.asynciterable"],
     "outDir": "build",
-    "rootDir": "src",
+    "sourceMap": true,
     "strict": true,
     "strictPropertyInitialization": false,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["src"]
 }
