@@ -1,4 +1,4 @@
-import {Field, Float, InputType} from "type-graphql";
+import {Field, Float, InputType, Int} from "type-graphql";
 
 @InputType()
 export class ProductInput {
@@ -10,4 +10,7 @@ export class ProductInput {
 
   @Field(() => Float)
   price: number;
+
+  @Field(() => Int)
+  stockCount: number;
 }

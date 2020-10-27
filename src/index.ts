@@ -2,7 +2,7 @@ import {ApolloServer} from "apollo-server";
 import "reflect-metadata";
 import {buildSchema} from "type-graphql";
 import {Container} from "typedi";
-import {createConnection, useContainer} from "typeorm/index";
+import {createConnection, getConnection, useContainer} from "typeorm/index";
 import {PostgresConnectionOptions} from "typeorm/driver/postgres/PostgresConnectionOptions";
 
 const PORT = process.env.PORT ?? 4000;
@@ -28,6 +28,8 @@ async function bootstrap() {
     entities: [__dirname + "/**/*.entity.js"],
     logging: ["query"],
   } as PostgresConnectionOptions);
+
+  // await getConnection().dropDatabase();
 }
 
 bootstrap().catch(console.error);
