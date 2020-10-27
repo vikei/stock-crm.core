@@ -13,7 +13,7 @@ export default class UserResolver {
   @Mutation(() => UserEntity)
   async register(@Arg("input") input: UserCredentials): Promise<UserEntity> {
     const {id} = await this.userRepository.save(input);
-    return (await this.userRepository.findOne(id)) as UserEntity;
+    return (await this.userRepository.findOne(id))!;
   }
 
   @Mutation(() => UserEntity, {nullable: true})
