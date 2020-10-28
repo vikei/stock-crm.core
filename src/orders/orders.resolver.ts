@@ -75,7 +75,6 @@ export default class OrdersResolver {
         prevInventory => prevInventory.productId === inventory.productId,
       ) ?? {count: 0};
       const inventoryCountDiff = inventory.count - prevInventory.count;
-      console.log(inventory.productId, inventory.count, prevInventory.count, inventoryCountDiff);
       stock.count = stock.count - inventoryCountDiff;
       return this.stockRepository.create(stock);
     });
