@@ -2,8 +2,8 @@ import {Field, ID, Int, ObjectType} from "type-graphql";
 import {Column, Entity, PrimaryGeneratedColumn} from "typeorm/index";
 import ProductEntity from "../products/product.entity";
 
-@ObjectType("OrderInventory")
-export class OrderInventory {
+@ObjectType("OrderInventoryItem")
+export class OrderInventoryItem {
   @Field(() => Int)
   productId: number;
 
@@ -18,9 +18,9 @@ export default class OrderEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field(() => [OrderInventory])
+  @Field(() => [OrderInventoryItem])
   @Column({type: "json"})
-  inventory: OrderInventory[];
+  inventory: OrderInventoryItem[];
 
   @Field(() => [ProductEntity])
   products: ProductEntity[];
