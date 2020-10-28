@@ -1,19 +1,16 @@
 import {Service} from "typedi";
 import {InjectRepository} from "typeorm-typedi-extensions";
-import StockEntity from "../stocks/stock.entity";
+import StockEntity from "./stock.entity";
 import {In, Repository} from "typeorm/index";
-import {OrderInventoryItem} from "./order.entity";
-import {
-  getUniqueProductIdsFromInventory,
-  createStocksData,
-  createDeletedInventoryStocksData,
-} from "./inventory.lib";
+import {OrderInventoryItem} from "../orders/order.entity";
+import {getUniqueProductIdsFromInventory} from "../orders/inventory.lib";
+import {createDeletedInventoryStocksData, createStocksData} from "./stocks.lib";
 
 @Service()
-export default class InventoryService {
+export default class StocksService {
   constructor(@InjectRepository(StockEntity) private stockRepository: Repository<StockEntity>) {}
 
-  async updateStock(
+  async updateByInventory(
     newInventory: OrderInventoryItem[],
     oldInventory: OrderInventoryItem[] = [],
   ): Promise<StockEntity[]> {
