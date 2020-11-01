@@ -1,9 +1,9 @@
 import {Service} from "typedi";
-import {Arg, FieldResolver, ID, Int, Mutation, Query, Resolver, Root} from "type-graphql";
+import {Arg, Args, FieldResolver, ID, Int, Mutation, Query, Resolver, Root} from "type-graphql";
 import {InjectRepository} from "typeorm-typedi-extensions";
 import ProductEntity from "./product.entity";
-import {Repository} from "typeorm/index";
-import {ProductInput} from "./products.args";
+import {FindConditions, Raw, Repository} from "typeorm/index";
+import {ProductInput, ProductsQuery} from "./products.args";
 import StockEntity from "../stocks/stock.entity";
 
 @Service()
@@ -15,8 +15,14 @@ export default class ProductsResolver {
   ) {}
 
   @Query(() => [ProductEntity])
-  async products() {
-    return this.productRepository.find();
+  async products(@Args() {name}: ProductsQuery) {
+    const where: FindConditions<ProductEntity> = {};
+
+    if (name) {
+      where.name = Raw(alias => `${alias} ILIKE '%${name}%'`);
+    }
+
+    return this.productRepository.find({where});
   }
 
   @Mutation(() => ProductEntity)
@@ -31,7 +37,7 @@ export default class ProductsResolver {
     @Arg("id", () => ID)
     id: string,
     @Arg("input") {stockCount, ...input}: ProductInput,
-  ): Promise<ProductEntity | null | undefined> {
+  ): Promise<ProductEntity | null> {
     const product = await this.productRepository.findOne(id);
     if (!product) {
       return null;
@@ -48,7 +54,6 @@ export default class ProductsResolver {
   @Mutation(() => Int, {nullable: true})
   async deleteProduct(@Arg("id", () => ID) id: string): Promise<number | null> {
     const {affected} = await this.productRepository.delete(id);
-    await this.stockRepository.delete({productId: parseInt(id)});
     return affected ?? null;
   }
 

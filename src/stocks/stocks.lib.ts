@@ -14,6 +14,7 @@ export function createStocksData(
   stocks: StockEntity[],
   oldInventory: OrderInventoryItem[] = [],
 ): StockEntity[] {
+  // TODO: handle if product was deleted
   return inventory.map(inventoryItem => {
     const stock = {...findStockByProductId(stocks, inventoryItem.productId)!};
     stock.count = stock.count - calculateCountDiff(inventoryItem, oldInventory);

@@ -18,7 +18,7 @@ export default class StockEntity {
   count: number;
 
   @Field(() => ProductEntity)
-  @OneToOne(() => ProductEntity, product => product.stock)
+  @OneToOne(() => ProductEntity, product => product.stock, {onDelete: "CASCADE"})
   @JoinColumn()
   product: ProductEntity;
 }

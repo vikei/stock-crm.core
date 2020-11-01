@@ -1,5 +1,5 @@
 import {Service} from "typedi";
-import {Arg, FieldResolver, ID, Mutation, Resolver, Root} from "type-graphql";
+import {Arg, FieldResolver, ID, Int, Mutation, Query, Resolver, Root} from "type-graphql";
 import {InjectRepository} from "typeorm-typedi-extensions";
 import OrderEntity from "./order.entity";
 import {In, Repository} from "typeorm/index";
@@ -42,8 +42,24 @@ export default class OrdersResolver {
     return updatedOrder;
   }
 
+  @Query(() => [OrderEntity])
+  async orders(): Promise<OrderEntity[]> {
+    return this.orderRepository.find();
+  }
+
+  @Query(() => OrderEntity, {nullable: true})
+  async order(@Arg("id", () => ID) id: string): Promise<OrderEntity | null> {
+    return (await this.orderRepository.findOne(id)) ?? null;
+  }
+
+  @Mutation(() => Int, {nullable: true})
+  async deleteOrder(@Arg("id", () => ID) id: string) {
+    const {affected} = await this.orderRepository.delete(id);
+    return affected ?? null;
+  }
+
   @FieldResolver()
-  products(@Root() order: OrderEntity) {
+  products(@Root() order: OrderEntity): Promise<ProductEntity[]> {
     const productIds = order.inventory.map(inventory => inventory.productId);
     return this.productRepository.find({where: {id: In(productIds)}});
   }
