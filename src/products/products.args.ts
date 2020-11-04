@@ -13,6 +13,9 @@ export class ProductInput {
 
   @Field(() => Int)
   stockCount: number;
+
+  @Field()
+  available: boolean;
 }
 
 @ArgsType()

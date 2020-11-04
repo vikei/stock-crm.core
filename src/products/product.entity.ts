@@ -21,9 +21,13 @@ export default class ProductEntity {
   @Column({type: "float"})
   price: number;
 
-  @OneToOne(() => StockEntity, stock => stock.product)
-  stock: StockEntity;
+  @Field()
+  @Column()
+  available: boolean;
 
   @Field(() => Int)
   stockCount: number;
+
+  @OneToOne(() => StockEntity, stock => stock.product)
+  stock: StockEntity;
 }

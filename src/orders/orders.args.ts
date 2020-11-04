@@ -1,4 +1,5 @@
 import {Field, InputType, Int} from "type-graphql";
+import {OrderStatus} from "./orders.constants";
 
 @InputType()
 export class OrderInventoryInput {
@@ -13,4 +14,7 @@ export class OrderInventoryInput {
 export class OrderInput {
   @Field(() => [OrderInventoryInput])
   inventory: OrderInventoryInput[];
+
+  @Field(() => OrderStatus)
+  status: OrderStatus;
 }
