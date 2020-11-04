@@ -7,6 +7,7 @@ import {OrderInput} from "./orders.args";
 import ProductEntity from "../products/product.entity";
 import StockEntity from "../stocks/stock.entity";
 import StocksService from "../stocks/stocks.service";
+import {OrderStatus} from "./orders.constants";
 
 @Service()
 @Resolver(() => OrderEntity)
@@ -37,7 +38,15 @@ export default class OrdersResolver {
 
     await this.orderRepository.update(id, input);
     const updatedOrder = (await this.orderRepository.findOne(id))!;
-    await this.stocksService.updateByInventory(updatedOrder.inventory, oldOrder.inventory);
+
+    const orderBecomeCanceled =
+      ![OrderStatus.CANCELED, OrderStatus.NOT_DELIVERED].includes(oldOrder.status) &&
+      [OrderStatus.CANCELED, OrderStatus.NOT_DELIVERED].includes(updatedOrder.status);
+    if (orderBecomeCanceled) {
+      await this.stocksService.updateByInventory([], oldOrder.inventory);
+    } else {
+      await this.stocksService.updateByInventory(updatedOrder.inventory, oldOrder.inventory);
+    }
 
     return updatedOrder;
   }
