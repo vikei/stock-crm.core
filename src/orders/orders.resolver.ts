@@ -1,4 +1,5 @@
 import {Service} from "typedi";
+import {UserInputError} from "apollo-server";
 import {Arg, FieldResolver, ID, Int, Mutation, Query, Resolver, Root} from "type-graphql";
 import {InjectRepository} from "typeorm-typedi-extensions";
 import OrderEntity from "./order.entity";
@@ -8,6 +9,7 @@ import ProductEntity from "../products/product.entity";
 import StockEntity from "../stocks/stock.entity";
 import StocksService from "../stocks/stocks.service";
 import {OrderStatus} from "./orders.constants";
+import {NullableResponse, Response} from "../library/lib/response-types";
 
 @Service()
 @Resolver(() => OrderEntity)
@@ -20,20 +22,20 @@ export default class OrdersResolver {
   ) {}
 
   @Mutation(() => OrderEntity)
-  async createOrder(@Arg("input") input: OrderInput): Promise<OrderEntity> {
+  async createOrder(@Arg("input") input: OrderInput): Response<OrderEntity> {
     const order = await this.orderRepository.save(this.orderRepository.create(input));
     await this.stocksService.updateByInventory(order.inventory);
     return order;
   }
 
-  @Mutation(() => OrderEntity, {nullable: true})
+  @Mutation(() => OrderEntity)
   async updateOrder(
     @Arg("id", () => ID) id: string,
     @Arg("input") input: OrderInput,
-  ): Promise<OrderEntity | null> {
+  ): Response<OrderEntity> {
     const oldOrder = await this.orderRepository.findOne(id);
     if (!oldOrder) {
-      return null;
+      throw new UserInputError("Order not found");
     }
 
     await this.orderRepository.update(id, input);
@@ -52,23 +54,23 @@ export default class OrdersResolver {
   }
 
   @Query(() => [OrderEntity])
-  async orders(): Promise<OrderEntity[]> {
+  async orders(): Response<OrderEntity[]> {
     return this.orderRepository.find();
   }
 
   @Query(() => OrderEntity, {nullable: true})
-  async order(@Arg("id", () => ID) id: string): Promise<OrderEntity | null> {
-    return (await this.orderRepository.findOne(id)) ?? null;
+  async order(@Arg("id", () => ID) id: string): NullableResponse<OrderEntity> {
+    return await this.orderRepository.findOne(id);
   }
 
   @Mutation(() => Int, {nullable: true})
-  async deleteOrder(@Arg("id", () => ID) id: string) {
+  async deleteOrder(@Arg("id", () => ID) id: string): NullableResponse<number> {
     const {affected} = await this.orderRepository.delete(id);
     return affected ?? null;
   }
 
   @FieldResolver()
-  products(@Root() order: OrderEntity): Promise<ProductEntity[]> {
+  products(@Root() order: OrderEntity): Response<ProductEntity[]> {
     const productIds = order.inventory.map(inventory => inventory.productId);
     return this.productRepository.find({where: {id: In(productIds)}});
   }

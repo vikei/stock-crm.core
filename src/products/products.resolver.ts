@@ -15,7 +15,7 @@ export default class ProductsResolver {
   ) {}
 
   @Query(() => [ProductEntity])
-  async products(@Args() {name}: ProductsQuery) {
+  async products(@Args() {name}: ProductsQuery): Promise<ProductEntity[]> {
     const where: FindConditions<ProductEntity> = {};
 
     if (name) {
@@ -58,12 +58,12 @@ export default class ProductsResolver {
   }
 
   @Query(() => ProductEntity, {nullable: true})
-  async product(@Arg("id", () => ID) id: string) {
+  async product(@Arg("id", () => ID) id: string): Promise<ProductEntity | null> {
     return (await this.productRepository.findOne(id)) ?? null;
   }
 
   @FieldResolver()
-  async stockCount(@Root() product: ProductEntity) {
+  async stockCount(@Root() product: ProductEntity): Promise<number> {
     const {count} = (await this.stockRepository.findOne({productId: product.id}))!;
     return count;
   }
