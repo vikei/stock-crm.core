@@ -9,7 +9,7 @@ import ProductEntity from "../products/product.entity";
 import StockEntity from "../stocks/stock.entity";
 import StocksService from "../stocks/stocks.service";
 import {OrderStatus} from "./orders.constants";
-import {NullableResponse, Response} from "../library/lib/response-types";
+import {NullableResponse, Response} from "../library/gateway/response";
 
 @Service()
 @Resolver(() => OrderEntity)
