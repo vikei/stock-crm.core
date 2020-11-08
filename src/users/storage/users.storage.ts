@@ -9,11 +9,11 @@ import {UserQuery} from "./user.query";
 export default class UsersStorage {
   constructor(@InjectRepository(UserEntity) public userRepository: Repository<UserEntity>) {}
 
-  async createUser(dto: UserDto): Promise<UserEntity> {
-    return this.userRepository.save(dto);
+  async create(dto: UserDto): Promise<UserEntity> {
+    return this.userRepository.save(this.userRepository.create(dto));
   }
 
-  async findUser(query: UserQuery): Promise<UserEntity | undefined> {
+  async findOne(query: UserQuery): Promise<UserEntity | undefined> {
     const where: FindConditions<UserEntity> = {};
 
     if (query.email) {

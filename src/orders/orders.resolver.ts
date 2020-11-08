@@ -5,7 +5,7 @@ import {InjectRepository} from "typeorm-typedi-extensions";
 import OrderEntity from "./order.entity";
 import {In, Repository} from "typeorm/index";
 import {OrderInput} from "./orders.args";
-import ProductEntity from "../products/product.entity";
+import ProductEntity from "../products/storage/product.entity";
 import StockEntity from "../stocks/stock.entity";
 import StocksService from "../stocks/stocks.service";
 import {OrderStatus} from "./orders.constants";

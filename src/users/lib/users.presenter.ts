@@ -1,6 +1,6 @@
 import {Service} from "typedi";
 import UserEntity from "../storage/user.entity";
-import UserType from "./user.type";
+import UserType from "../gateway/user.type";
 
 @Service()
 export default class UsersPresenter {
