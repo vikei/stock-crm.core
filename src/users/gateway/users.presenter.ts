@@ -4,7 +4,7 @@ import UserType from "./user.type";
 
 @Service()
 export default class UsersPresenter {
-  prepareUser(userEntity: UserEntity): UserType {
+  prepareForResponse(userEntity: UserEntity): UserType {
     return {...userEntity, id: userEntity.id.toString()};
   }
 }

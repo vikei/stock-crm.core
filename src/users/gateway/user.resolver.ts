@@ -15,7 +15,7 @@ export default class UserResolver {
   @Mutation(() => UserType)
   async register(@Arg("input") input: UserCredentialsInput): Response<UserType> {
     const userEntity = await this.usersStorage.createUser(input);
-    return this.usersPresenter.prepareUser(userEntity);
+    return this.usersPresenter.prepareForResponse(userEntity);
   }
 
   @Mutation(() => UserType)
@@ -26,7 +26,7 @@ export default class UserResolver {
       throw new UserInputError("Invalid credentials");
     }
 
-    return this.usersPresenter.prepareUser(userEntity);
+    return this.usersPresenter.prepareForResponse(userEntity);
   }
 
   @Query(() => UserType, {nullable: true})
@@ -37,6 +37,6 @@ export default class UserResolver {
       return null;
     }
 
-    return this.usersPresenter.prepareUser(userEntity);
+    return this.usersPresenter.prepareForResponse(userEntity);
   }
 }
