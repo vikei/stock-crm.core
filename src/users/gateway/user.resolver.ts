@@ -6,7 +6,7 @@ import {NullableResponse, Response} from "../../library/gateway/response";
 import UsersStorage from "../storage/users.storage";
 import UserType from "./user.type";
 import UsersPresenter from "../lib/users.presenter";
-import comparePassword from "../domain/lib/compare-passwords";
+import comparePasswords from "../domain/lib/compare-passwords";
 
 @Service()
 @Resolver(() => UserType)
@@ -23,7 +23,7 @@ export default class UserResolver {
   async login(@Arg("input") {email, password}: UserCredentialsInput): Response<UserType> {
     const userEntity = await this.usersStorage.findOne({email});
 
-    if (!userEntity || !comparePassword(userEntity.password, password)) {
+    if (!userEntity || !comparePasswords(userEntity.password, password)) {
       throw new UserInputError("Invalid credentials");
     }
 

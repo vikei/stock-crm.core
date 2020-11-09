@@ -1,3 +1,3 @@
-export default function comparePassword(password: string, passwordToCompare: string): boolean {
+export default function comparePasswords(password: string, passwordToCompare: string): boolean {
   return password === passwordToCompare;
 }
