@@ -1,5 +1,5 @@
 import {Column, Entity, OneToOne, PrimaryGeneratedColumn} from "typeorm/index";
-import StockEntity from "../../stocks/stock.entity";
+import StockEntity from "../../stocks/storage/stock.entity";
 
 @Entity()
 export default class ProductEntity {

@@ -1,6 +1,4 @@
-import {registerEnumType} from "type-graphql";
-
-export enum OrderStatus {
+enum DeliveryStatus {
   AWAITING_PROCESSING = "AWAITING_PROCESSING",
   PROCESSING = "PROCESSING",
   SHIPPED = "SHIPPED",
@@ -8,4 +6,5 @@ export enum OrderStatus {
   NOT_DELIVERED = "NOT_DELIVERED",
   CANCELED = "CANCELED",
 }
-registerEnumType(OrderStatus, {name: "OrderStatus"});
+
+export default DeliveryStatus;

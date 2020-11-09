@@ -1,25 +1,29 @@
 import {Service} from "typedi";
 import {InjectRepository} from "typeorm-typedi-extensions";
 import ProductEntity from "./product.entity";
-import {FindConditions, Raw, Repository} from "typeorm/index";
+import {FindConditions, In, Raw, Repository} from "typeorm/index";
 import ProductDto from "./product.dto";
 import ProductsQuery from "./products.query";
 
 @Service()
 export default class ProductsStorage {
   constructor(
-    @InjectRepository(ProductEntity) private productRepository: Repository<ProductEntity>,
+    @InjectRepository(ProductEntity) public productRepository: Repository<ProductEntity>,
   ) {}
 
   async create(dto: ProductDto): Promise<ProductEntity> {
     return this.productRepository.save(this.productRepository.create(dto));
   }
 
-  async findMany(query: ProductsQuery): Promise<ProductEntity[]> {
+  async find(query: ProductsQuery): Promise<ProductEntity[]> {
     const where: FindConditions<ProductEntity> = {};
 
     if (query.name) {
       where.name = Raw(alias => `${alias} ILIKE '%${query.name}%'`);
+    }
+
+    if (query.ids) {
+      where.id = In(query.ids);
     }
 
     return this.productRepository.find({where});

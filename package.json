@@ -6,7 +6,7 @@
   "scripts": {
     "clear": "rimraf ./build",
     "build": "yarn clear && tsc",
-    "start": "node ./build",
+    "start": "node  --inspect ./build",
     "dev": "nodemon",
     "format": "eslint './src/**/*.{js,ts}' --quiet --fix"
   },
