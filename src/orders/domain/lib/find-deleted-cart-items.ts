@@ -2,13 +2,17 @@ import CartItem from "../cart-item";
 
 export default function findDeletedCartItems(newCart: CartItem[], oldCart: CartItem[]): CartItem[] {
   function isProductIdRemoved(productId: number) {
-    return !newCartByProductId.includes(productId);
+    return !newCartProductIds.includes(productId);
   }
 
-  const newCartByProductId = newCart.map(item => item.productId);
-  const oldCartByProductId = oldCart.map(item => item.productId);
+  function isCartDeleted(cartItem: CartItem) {
+    return deletedProductsIds.includes(cartItem.productId);
+  }
 
-  const deletedCartIds = oldCartByProductId.filter(isProductIdRemoved);
+  const newCartProductIds = newCart.map(item => item.productId);
+  const oldCartProductIds = oldCart.map(item => item.productId);
 
-  return oldCart.filter(({productId}) => deletedCartIds.includes(productId));
+  const deletedProductsIds = oldCartProductIds.filter(isProductIdRemoved);
+
+  return oldCart.filter(isCartDeleted);
 }
