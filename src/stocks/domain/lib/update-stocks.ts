@@ -3,7 +3,7 @@ import Stock from "../stock";
 import diffCartItems from "../../../orders/domain/lib/diff-cart-items";
 import findDeletedCartItems from "../../../orders/domain/lib/find-deleted-cart-items";
 
-export function updateStock({...stock}: Stock, cartItem: CartItem): Stock {
+export function calculateStock({...stock}: Stock, cartItem: CartItem): Stock {
   stock.count = stock.count - cartItem.count;
   return stock;
 }
@@ -22,14 +22,18 @@ export function updateStocks(stocks: Stock[], cart: CartItem[], oldCart?: CartIt
       return cartItem;
     }
 
-    const oldCartItem = findCartItem(cartItem.productId, oldCart)!;
+    const oldCartItem = findCartItem(cartItem.productId, oldCart);
+    if (!oldCartItem) {
+      return cartItem;
+    }
+
     return diffCartItems(cartItem, oldCartItem);
   }
 
   function revertStock(deletedCartItem: CartItem): Stock {
     const stock = findStock(stocks, deletedCartItem.productId)!;
 
-    return updateStock(
+    return calculateStock(
       stock,
       // invert stock count, result = 0 - (-5) = 0 + 5
       diffCartItems({count: 0, productId: deletedCartItem.productId}, deletedCartItem),
@@ -46,7 +50,7 @@ export function updateStocks(stocks: Stock[], cart: CartItem[], oldCart?: CartIt
     const stock = findStock(stocks, cartItem.productId)!;
     const updatedCartItem = updateCartItem(cartItem);
 
-    return updateStock(stock, updatedCartItem);
+    return calculateStock(stock, updatedCartItem);
   });
 
   return [...revertedStocks, ...updatedStocks];
