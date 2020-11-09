@@ -13,7 +13,7 @@ export function updateStocks(stocks: Stock[], cart: CartItem[], oldCart?: CartIt
     return cart.find(cartItem => cartItem.productId === productId);
   }
 
-  function findStock(stocks: Stock[], productId: number): Stock | undefined {
+  function findStock(productId: number, stocks: Stock[]): Stock | undefined {
     return stocks.find(stock => stock.productId === productId);
   }
 
@@ -22,16 +22,12 @@ export function updateStocks(stocks: Stock[], cart: CartItem[], oldCart?: CartIt
       return cartItem;
     }
 
-    const oldCartItem = findCartItem(cartItem.productId, oldCart);
-    if (!oldCartItem) {
-      return cartItem;
-    }
-
+    const oldCartItem = findCartItem(cartItem.productId, oldCart)!;
     return diffCartItems(cartItem, oldCartItem);
   }
 
   function revertStock(deletedCartItem: CartItem): Stock {
-    const stock = findStock(stocks, deletedCartItem.productId)!;
+    const stock = findStock(deletedCartItem.productId, stocks)!;
 
     return calculateStock(
       stock,
@@ -40,18 +36,19 @@ export function updateStocks(stocks: Stock[], cart: CartItem[], oldCart?: CartIt
     );
   }
 
-  let revertedStocks: Stock[] = [];
-  if (oldCart) {
-    const deletedCartItems = findDeletedCartItems(cart, oldCart);
-    revertedStocks = deletedCartItems.map(revertStock);
-  }
-
-  const updatedStocks = cart.map(cartItem => {
-    const stock = findStock(stocks, cartItem.productId)!;
+  let updatedStocks = cart.map(cartItem => {
+    const stock = findStock(cartItem.productId, stocks)!;
     const updatedCartItem = updateCartItem(cartItem);
 
     return calculateStock(stock, updatedCartItem);
   });
 
-  return [...revertedStocks, ...updatedStocks];
+  if (oldCart) {
+    const deletedCartItems = findDeletedCartItems(cart, oldCart);
+    const revertedStocks = deletedCartItems.map(revertStock);
+
+    updatedStocks = updatedStocks.concat(revertedStocks);
+  }
+
+  return updatedStocks;
 }
