@@ -10,8 +10,7 @@ export default class OrdersPresenter {
     if (Array.isArray(entity)) {
       return entity.map(entity => OrdersPresenter.prepareForResponseSingle(entity));
     }
-
-    return {...entity, id: entity.id.toString()};
+    return OrdersPresenter.prepareForResponseSingle(entity);
   }
 
   private static prepareForResponseSingle(entity: OrderEntity): OrderTypeResponse {

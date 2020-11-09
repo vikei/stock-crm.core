@@ -9,11 +9,15 @@ import {updateStocksByCart} from "../domain/lib/update-stocks";
 export default class StocksService {
   constructor(public stocksStorage: StocksStorage) {}
 
-  async updateByCart(cart: CartItemColumn[], oldCart?: CartItemColumn[]): Promise<StockEntity[]> {
+  async update(cart: CartItemColumn[], oldCart?: CartItemColumn[]): Promise<StockEntity[]> {
     const stocks = await this.stocksStorage.find({
       productIds: getProductIdsFromCart([...cart, ...(oldCart ?? [])]),
     });
 
     return this.stocksStorage.saveMany(updateStocksByCart(stocks, cart, oldCart));
+  }
+
+  async revert(cart: CartItemColumn[]): Promise<StockEntity[]> {
+    return this.update([], cart);
   }
 }

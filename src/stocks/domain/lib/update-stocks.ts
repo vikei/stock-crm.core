@@ -8,6 +8,9 @@ export function updateStockCountByCartItem({...stock}: Stock, cartItem: CartItem
   return stock;
 }
 
+/**
+ * TODO: test
+ */
 export function updateStocksByCart(
   stocks: Stock[],
   cart: CartItem[],
