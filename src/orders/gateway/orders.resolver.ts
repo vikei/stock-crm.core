@@ -10,7 +10,6 @@ import ProductsStorage from "../../products/storage/products.storage";
 import OrdersPresenter from "../lib/orders.presenter";
 import {ProductTypeResponse} from "../../products/gateway/product.type";
 import ProductsPresenter from "../../products/lib/products.presenter";
-import becomeCanceled from "../domain/lib/become-canceled";
 
 @Service()
 @Resolver(() => OrderType)
@@ -27,7 +26,7 @@ export default class OrdersResolver {
   async createOrder(@Arg("input") input: OrderInput): Response<OrderTypeResponse> {
     const orderEntity = await this.ordersStorage.create(input);
 
-    await this.stocksService.update(orderEntity.cart);
+    await this.stocksService.update(orderEntity);
 
     return this.ordersPresenter.prepareForResponse(orderEntity);
   }
@@ -46,11 +45,7 @@ export default class OrdersResolver {
 
     const updatedOrderEntity = (await this.ordersStorage.updateById(orderId, input))!;
 
-    if (becomeCanceled(updatedOrderEntity, oldOrderEntity)) {
-      await this.stocksService.revert(oldOrderEntity.cart);
-    } else {
-      await this.stocksService.update(updatedOrderEntity.cart, oldOrderEntity.cart);
-    }
+    await this.stocksService.update(updatedOrderEntity, oldOrderEntity);
 
     return this.ordersPresenter.prepareForResponse(updatedOrderEntity);
   }

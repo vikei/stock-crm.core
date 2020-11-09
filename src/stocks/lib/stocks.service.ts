@@ -1,23 +1,19 @@
 import {Service} from "typedi";
 import StockEntity from "../storage/stock.entity";
-import CartItemColumn from "../../orders/storage/cart-item-column";
 import getProductIdsByCart from "../../orders/domain/lib/get-product-ids-by-cart";
 import StocksStorage from "../storage/stock.storage";
-import {updateStocks} from "../domain/lib/update-stocks";
+import OrderEntity from "../../orders/storage/order.entity";
+import updateStocksByOrder from "../../orders/domain/lib/update-stocks-by-order";
 
 @Service()
 export default class StocksService {
   constructor(public stocksStorage: StocksStorage) {}
 
-  async update(cart: CartItemColumn[], oldCart?: CartItemColumn[]): Promise<StockEntity[]> {
+  async update(order: OrderEntity, oldOrder?: OrderEntity): Promise<StockEntity[]> {
     const stocks = await this.stocksStorage.find({
-      productIds: getProductIdsByCart([...cart, ...(oldCart ?? [])]),
+      productIds: getProductIdsByCart([...order.cart, ...(oldOrder?.cart ?? [])]),
     });
 
-    return this.stocksStorage.saveMany(updateStocks(stocks, cart, oldCart));
-  }
-
-  async revert(cart: CartItemColumn[]): Promise<StockEntity[]> {
-    return this.update([], cart);
+    return this.stocksStorage.saveMany(updateStocksByOrder(order, stocks, oldOrder));
   }
 }

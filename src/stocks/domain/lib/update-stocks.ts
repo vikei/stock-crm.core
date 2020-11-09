@@ -31,6 +31,7 @@ export function updateStocks(stocks: Stock[], cart: CartItem[], oldCart?: CartIt
 
     return updateStock(
       stock,
+      // invert stock count, result = 0 - (-5) = 0 + 5
       diffCartItems({count: 0, productId: deletedCartItem.productId}, deletedCartItem),
     );
   }
