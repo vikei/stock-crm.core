@@ -2,13 +2,13 @@ import CartItem from "../../../orders/domain/cart-item";
 import Stock from "../stock";
 import diffCartItems from "../../../orders/domain/use-cases/diff-cart-items";
 import findDeletedCartItems from "../../../orders/domain/use-cases/find-deleted-cart-items";
+import recalculateStock from "./recalculate-stock";
 
-export function calculateStock({...stock}: Stock, cartItem: CartItem): Stock {
-  stock.count = stock.count - cartItem.count;
-  return stock;
-}
-
-export function updateStocks(stocks: Stock[], cart: CartItem[], oldCart?: CartItem[]): Stock[] {
+export function recalculateStocks(
+  stocks: Stock[],
+  cart: CartItem[],
+  oldCart?: CartItem[],
+): Stock[] {
   function findCartItem(productId: number, cart: CartItem[]): CartItem | undefined {
     return cart.find(cartItem => cartItem.productId === productId);
   }
@@ -30,7 +30,7 @@ export function updateStocks(stocks: Stock[], cart: CartItem[], oldCart?: CartIt
     const stock = findStock(deletedCartItem.productId, stocks)!;
 
     const fakeCartItem = new CartItem({count: 0, productId: deletedCartItem.productId});
-    return calculateStock(
+    return recalculateStock(
       stock,
       // invert stock count, result = 0 - (-5) = 0 + 5
       diffCartItems(fakeCartItem, deletedCartItem),
@@ -41,7 +41,7 @@ export function updateStocks(stocks: Stock[], cart: CartItem[], oldCart?: CartIt
     const stock = findStock(cartItem.productId, stocks)!;
     const updatedCartItem = updateCartItem(cartItem);
 
-    return calculateStock(stock, updatedCartItem);
+    return recalculateStock(stock, updatedCartItem);
   });
 
   if (oldCart) {

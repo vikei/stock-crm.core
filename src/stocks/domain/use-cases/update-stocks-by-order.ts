@@ -1,7 +1,7 @@
 import Order from "../../../orders/domain/order";
 import becomeCanceled from "../../../orders/domain/use-cases/become-canceled";
 import Stock from "../stock";
-import {updateStocks} from "./update-stocks";
+import {recalculateStocks} from "./recalculate-stocks";
 
 export default function updateStocksByOrder(
   order: Order,
@@ -9,12 +9,12 @@ export default function updateStocksByOrder(
   oldOrder?: Order,
 ): Stock[] {
   if (!oldOrder) {
-    return updateStocks(stocks, order.cart);
+    return recalculateStocks(stocks, order.cart);
   }
 
   if (becomeCanceled(order.deliveryStatus, oldOrder.deliveryStatus)) {
-    return updateStocks(stocks, [], oldOrder.cart);
+    return recalculateStocks(stocks, [], oldOrder.cart);
   }
 
-  return updateStocks(stocks, order.cart, oldOrder.cart);
+  return recalculateStocks(stocks, order.cart, oldOrder.cart);
 }
