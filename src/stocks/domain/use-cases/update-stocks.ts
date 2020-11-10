@@ -1,7 +1,7 @@
 import CartItem from "../../../orders/domain/cart-item";
 import Stock from "../stock";
-import diffCartItems from "../../../orders/domain/lib/diff-cart-items";
-import findDeletedCartItems from "../../../orders/domain/lib/find-deleted-cart-items";
+import diffCartItems from "../../../orders/domain/use-cases/diff-cart-items";
+import findDeletedCartItems from "../../../orders/domain/use-cases/find-deleted-cart-items";
 
 export function calculateStock({...stock}: Stock, cartItem: CartItem): Stock {
   stock.count = stock.count - cartItem.count;
@@ -29,10 +29,11 @@ export function updateStocks(stocks: Stock[], cart: CartItem[], oldCart?: CartIt
   function revertStock(deletedCartItem: CartItem): Stock {
     const stock = findStock(deletedCartItem.productId, stocks)!;
 
+    const fakeCartItem = new CartItem({count: 0, productId: deletedCartItem.productId});
     return calculateStock(
       stock,
       // invert stock count, result = 0 - (-5) = 0 + 5
-      diffCartItems({count: 0, productId: deletedCartItem.productId}, deletedCartItem),
+      diffCartItems(fakeCartItem, deletedCartItem),
     );
   }
 

@@ -1,7 +1,7 @@
-import Order from "../order";
-import becomeCanceled from "./become-canceled";
-import Stock from "../../../stocks/domain/stock";
-import {updateStocks} from "../../../stocks/domain/lib/update-stocks";
+import Order from "../../../orders/domain/order";
+import becomeCanceled from "../../../orders/domain/use-cases/become-canceled";
+import Stock from "../stock";
+import {updateStocks} from "./update-stocks";
 
 export default function updateStocksByOrder(
   order: Order,

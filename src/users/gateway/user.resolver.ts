@@ -6,7 +6,7 @@ import {NullableResponse, Response} from "../../library/gateway/response";
 import UsersStorage from "../storage/users.storage";
 import UserType from "./user.type";
 import UsersPresenter from "../lib/users.presenter";
-import comparePasswords from "../domain/lib/compare-passwords";
+import comparePasswords from "../lib/compare-passwords";
 
 @Service()
 @Resolver(() => UserType)
