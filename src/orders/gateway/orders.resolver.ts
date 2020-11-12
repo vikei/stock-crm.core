@@ -2,7 +2,7 @@ import {Service} from "typedi";
 import {UserInputError} from "apollo-server";
 import {Arg, FieldResolver, ID, Int, Mutation, Query, Resolver, Root} from "type-graphql";
 import {OrderInput} from "./orders.args";
-import StocksService from "../../stocks/lib/stocks.service";
+import OrdersService from "../lib/orders.service";
 import {NullableResponse, Response} from "../../library/gateway/response";
 import OrderType, {OrderTypeResponse} from "./order.type";
 import OrdersStorage from "../storage/orders.storage";
@@ -17,18 +17,15 @@ export default class OrdersResolver {
   constructor(
     private ordersStorage: OrdersStorage,
     private productsStorage: ProductsStorage,
-    private stocksService: StocksService,
+    private ordersService: OrdersService,
     private ordersPresenter: OrdersPresenter,
     private productsPresenter: ProductsPresenter,
   ) {}
 
   @Mutation(() => OrderType)
   async createOrder(@Arg("input") input: OrderInput): Response<OrderTypeResponse> {
-    const orderEntity = await this.ordersStorage.create(input);
-
-    await this.stocksService.update(orderEntity);
-
-    return this.ordersPresenter.prepareForResponse(orderEntity);
+    const order = await this.ordersService.create(input);
+    return this.ordersPresenter.prepareForResponse(order);
   }
 
   @Mutation(() => OrderType)
@@ -38,16 +35,14 @@ export default class OrdersResolver {
   ): Response<OrderTypeResponse> {
     const orderId = parseInt(id);
 
-    const oldOrderEntity = await this.ordersStorage.findOne({id: orderId});
-    if (!oldOrderEntity) {
-      throw new UserInputError("Stock not found");
+    const orderToUpdate = await this.ordersStorage.findOne({id: orderId});
+    if (!orderToUpdate) {
+      throw new UserInputError("Order not found");
     }
 
-    const updatedOrderEntity = (await this.ordersStorage.updateById(orderId, input))!;
+    const order = await this.ordersService.updateById(orderId, input);
 
-    await this.stocksService.update(updatedOrderEntity, oldOrderEntity);
-
-    return this.ordersPresenter.prepareForResponse(updatedOrderEntity);
+    return this.ordersPresenter.prepareForResponse(order);
   }
 
   @Query(() => [OrderType])
@@ -57,13 +52,13 @@ export default class OrdersResolver {
 
   @Query(() => OrderType, {nullable: true})
   async order(@Arg("id", () => ID) id: string): NullableResponse<OrderTypeResponse> {
-    const orderEntity = await this.ordersStorage.findOne({id: parseInt(id)});
+    const order = await this.ordersStorage.findOne({id: parseInt(id)});
 
-    if (!orderEntity) {
+    if (!order) {
       return null;
     }
 
-    return this.ordersPresenter.prepareForResponse(orderEntity);
+    return this.ordersPresenter.prepareForResponse(order);
   }
 
   @Mutation(() => Int, {nullable: true})

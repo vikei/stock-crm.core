@@ -15,29 +15,29 @@ export default class UserResolver {
 
   @Mutation(() => UserType)
   async register(@Arg("input") input: UserCredentialsInput): Response<UserType> {
-    const userEntity = await this.usersStorage.create(input);
-    return this.usersPresenter.prepareForResponse(userEntity);
+    const user = await this.usersStorage.create(input);
+    return this.usersPresenter.prepareForResponse(user);
   }
 
   @Mutation(() => UserType)
   async login(@Arg("input") {email, password}: UserCredentialsInput): Response<UserType> {
-    const userEntity = await this.usersStorage.findOne({email});
+    const user = await this.usersStorage.findOne({email});
 
-    if (!userEntity || !comparePasswords(userEntity.password, password)) {
+    if (!user || !comparePasswords(user.password, password)) {
       throw new UserInputError("Invalid credentials");
     }
 
-    return this.usersPresenter.prepareForResponse(userEntity);
+    return this.usersPresenter.prepareForResponse(user);
   }
 
   @Query(() => UserType, {nullable: true})
   async getUser(@Arg("id") id: string): NullableResponse<UserType> {
-    const userEntity = await this.usersStorage.findOne({id: parseInt(id)});
+    const user = await this.usersStorage.findOne({id: parseInt(id)});
 
-    if (!userEntity) {
+    if (!user) {
       return null;
     }
 
-    return this.usersPresenter.prepareForResponse(userEntity);
+    return this.usersPresenter.prepareForResponse(user);
   }
 }

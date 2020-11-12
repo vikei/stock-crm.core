@@ -22,11 +22,11 @@ export default class ProductsResolver {
   async createProduct(
     @Arg("input") {stockCount, ...input}: ProductInput,
   ): Response<ProductTypeResponse> {
-    const productEntity = await this.productsStorage.create(input);
+    const product = await this.productsStorage.create(input);
 
-    await this.stocksStorage.create({productId: productEntity.id, count: stockCount});
+    await this.stocksStorage.create({productId: product.id, count: stockCount});
 
-    return this.productsPresenter.prepareForResponse(productEntity);
+    return this.productsPresenter.prepareForResponse(product);
   }
 
   @Mutation(() => ProductType, {nullable: true})
@@ -37,8 +37,8 @@ export default class ProductsResolver {
   ): NullableResponse<ProductTypeResponse> {
     const productId = parseInt(id);
 
-    const productEntity = await this.productsStorage.findOne({id: productId});
-    if (!productEntity) {
+    const productToUpdate = await this.productsStorage.findOne({id: productId});
+    if (!productToUpdate) {
       return null;
     }
 
@@ -47,9 +47,9 @@ export default class ProductsResolver {
     const stock = (await this.stocksStorage.findOne({productId}))!;
     await this.stocksStorage.updateById(stock.id, {productId, count: stockCount});
 
-    const updatedProductEntity = (await this.productsStorage.findOne({id: productId}))!;
+    const product = (await this.productsStorage.findOne({id: productId}))!;
 
-    return this.productsPresenter.prepareForResponse(updatedProductEntity);
+    return this.productsPresenter.prepareForResponse(product);
   }
 
   @Query(() => [ProductType])
@@ -60,13 +60,13 @@ export default class ProductsResolver {
 
   @Query(() => ProductType, {nullable: true})
   async product(@Arg("id", () => ID) id: string): NullableResponse<ProductTypeResponse> {
-    const productEntity = await this.productsStorage.findOne({id: parseInt(id)});
+    const product = await this.productsStorage.findOne({id: parseInt(id)});
 
-    if (!productEntity) {
+    if (!product) {
       return null;
     }
 
-    return this.productsPresenter.prepareForResponse(productEntity);
+    return this.productsPresenter.prepareForResponse(product);
   }
 
   @Mutation(() => Int, {nullable: true})

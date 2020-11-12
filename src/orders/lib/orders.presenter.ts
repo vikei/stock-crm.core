@@ -4,13 +4,13 @@ import {OrderTypeResponse} from "../gateway/order.type";
 
 @Service()
 export default class OrdersPresenter {
-  prepareForResponse(entity: OrderEntity): OrderTypeResponse;
-  prepareForResponse(entity: OrderEntity[]): OrderTypeResponse[];
-  prepareForResponse(entity: OrderEntity | OrderEntity[]): OrderTypeResponse | OrderTypeResponse[] {
-    if (Array.isArray(entity)) {
-      return entity.map(entity => OrdersPresenter.prepareForResponseSingle(entity));
+  prepareForResponse(data: OrderEntity): OrderTypeResponse;
+  prepareForResponse(data: OrderEntity[]): OrderTypeResponse[];
+  prepareForResponse(data: OrderEntity | OrderEntity[]): OrderTypeResponse | OrderTypeResponse[] {
+    if (Array.isArray(data)) {
+      return data.map(entity => OrdersPresenter.prepareForResponseSingle(entity));
     }
-    return OrdersPresenter.prepareForResponseSingle(entity);
+    return OrdersPresenter.prepareForResponseSingle(data);
   }
 
   private static prepareForResponseSingle(entity: OrderEntity): OrderTypeResponse {
