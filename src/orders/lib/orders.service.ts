@@ -26,7 +26,7 @@ export default class OrdersService {
       throw Error();
     }
 
-    const order = <OrderEntity>await this.ordersStorage.updateById(id, dto);
+    const order = (await this.ordersStorage.updateById(id, dto))!;
 
     await this.updateStocks(order, orderToUpdate);
 

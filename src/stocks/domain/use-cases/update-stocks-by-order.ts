@@ -13,7 +13,8 @@ export default function updateStocksByOrder(
   }
 
   if (becomeCanceled(order.deliveryStatus, oldOrder.deliveryStatus)) {
-    return recalculateStocks(stocks, [], oldOrder.cart);
+    const EMPTY_CART = [];
+    return recalculateStocks(stocks, EMPTY_CART, oldOrder.cart);
   }
 
   return recalculateStocks(stocks, order.cart, oldOrder.cart);
