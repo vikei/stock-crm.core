@@ -49,9 +49,6 @@
       "sourceType": "module",
       "project": "./tsconfig.json"
     },
-    "plugins": [
-      "type-graphql"
-    ],
     "extends": [
       "plugin:@typescript-eslint/recommended",
       "prettier/@typescript-eslint",
